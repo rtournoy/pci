@@ -72,6 +72,7 @@ def last_recomms():
             db.t_articles.i_am_an_author,
             db.t_articles.is_not_reviewed_elsewhere,
             db.t_articles.auto_nb_recommendations,
+            db.t_articles.scheduled_submission_date,
             limitby=(0, maxArticles),
             orderby=~db.t_articles.last_status_change,
         )
