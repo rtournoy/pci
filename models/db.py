@@ -725,9 +725,6 @@ def newArticle(s, articleId):
         emailing.send_to_managers(session, auth, db, articleId, "Pending")
         emailing.send_to_submitter_acknowledgement_submission(session, auth, db, articleId)
 
-    if scheduledSubmissionActivated and s.doi is None and s.scheduled_submission_date is not None:
-        emailing.create_reminder_for_submitter_shceduled_submission_due(session, auth, db, articleId)
-
     return None
 
 
