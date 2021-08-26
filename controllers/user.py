@@ -713,6 +713,8 @@ def fill_report_survey():
 
         fields = [
             "q1",
+            "q1_1",
+            "q1_2",
             "q2",
             "q3",
             "q4",
@@ -921,6 +923,8 @@ def edit_report_survey():
         
         fields = [
             "q1",
+            "q1_1",
+            "q1_2",
             "q2",
             "q3",
             "q4",

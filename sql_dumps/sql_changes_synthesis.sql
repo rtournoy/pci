@@ -207,6 +207,10 @@ ALTER TABLE public.t_articles
 -- 28/07/2021
 ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q32 boolean;
 
+-- 22/08/2021
+ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q1_1 character varying(1024);
+ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q1_2 character varying(256);
+
 -- 06/09/2021
 -- For PCi RR
 INSERT INTO "public"."mail_templates"("hashtag","lang","subject","description","contents")
