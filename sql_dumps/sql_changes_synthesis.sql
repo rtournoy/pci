@@ -211,6 +211,12 @@ ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q32 boolean;
 ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q1_1 character varying(1024);
 ALTER TABLE public.t_report_survey ADD COLUMN  IF NOT EXISTS q1_2 character varying(256);
 
+-- 27/08/2021
+INSERT INTO "public"."t_status_article"("id","status","color_class","explaination","priority_level")
+VALUES
+(43,E'Scheduled submission pending',E'danger',NULL,E'A'),
+(44,E'Scheduled submission under consideration',E'info',NULL,E'A');
+
 -- 06/09/2021
 -- For PCi RR
 INSERT INTO "public"."mail_templates"("hashtag","lang","subject","description","contents")
