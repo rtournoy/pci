@@ -486,7 +486,7 @@ def getRecommendationProcess(auth, db, response, art, printable=False, quiet=Tru
             if auth.has_membership(role="recommender") and (recomm.recommender_id == auth.user_id or amICoRecommender) and review.review_state == "Willing to review":
                 reviewVars.update([("showReviewRequest", True)])
 
-            if (review.reviewer_id == auth.user_id) and (review.reviewer_id != recomm.recommender_id) and (art.status in ("Under consideration", "Scheduled submission under consideration")) and not (printable):
+            if (review.reviewer_id == auth.user_id) and (review.reviewer_id != recomm.recommender_id) and (art.status in ("Under consideration", "Scheduled submission pending", "Scheduled submission under consideration")) and not (printable):
                 if review.review_state == "Awaiting response":
                     # reviewer's buttons in order to accept/decline pending review
                     reviewVars.update([("showInvitationButtons", True)])
@@ -574,7 +574,7 @@ def getRecommendationProcess(auth, db, response, art, printable=False, quiet=Tru
         editRecommendationButtonText = None
         if not (recomm.is_closed) and (recomm.recommender_id == auth.user_id or amICoRecommender) and (art.status == "Under consideration") and not (printable):
             # recommender's button for recommendation edition
-            if pciRRactivated and art.art_stage_1_id is None:
+            if pciRRactivated and art.art_stage_1_id is None and not isScheduledSubmission:
                 editRecommendationDisabled = False
                 editRecommendationButtonText = current.T("Write or edit your decision / recommendation")
                 editRecommendationLink = URL(c="recommender", f="edit_recommendation", vars=dict(recommId=recomm.id))

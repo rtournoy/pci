@@ -110,7 +110,7 @@
     {{if showDecisionLink:}}
       <div class="pci2-justify-end pci2-flex-grow">
 
-        {{if writeDecisionLink:}}
+        {{if writeDecisionLink and not isScheduledSubmission:}}
           <a 
             {{if isArticleSubmitter:}} 
               disabled 
