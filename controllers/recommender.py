@@ -1287,11 +1287,13 @@ def send_review_cancellation():
     longname = myconf.take("app.longname")
     appName = myconf.take("app.name")
     contact = myconf.take("contacts.managers")
-    art_authors = "[undisclosed]" if (art.anonymous_submission) else art.authors
-    art_title = art.title
-    art_doi = common_small_html.mkLinkDOI(recomm.doi or art.doi)
-    # art_doi = (recomm.doi or art.doi)
-    linkTarget = None  # URL(c='user', f='my_reviews', vars=dict(pendingOnly=True), scheme=scheme, host=host, port=port)
+
+    article_vars = emailing_vars.getArticleVars(db, article=art)
+    articleAuthors = article_vars["articleAuthors"]
+    articleTitle = article_vars["articleTitle"]
+    articleDoi = article_vars["articleDoi"]
+
+    linkTarget = None 
 
     if (review.review_state or "Awaiting response") == "Awaiting response":
         hashtag_template = emailing_tools.getCorrectHashtag("#DefaultReviewCancellation", art)
@@ -1385,9 +1387,11 @@ def email_for_registered_reviewer():
     longname = myconf.take("app.longname") # DEPRECATED: for compatibility purpose; to be removed after checkings
     appLongName = myconf.take("app.longname")
     appName = myconf.take("app.name")
-    art_authors = "[undisclosed]" if (art.anonymous_submission) else art.authors
-    art_title = art.title
-    art_doi = common_small_html.mkLinkDOI(recomm.doi or art.doi)
+
+    article_vars = emailing_vars.getArticleVars(db, article=art)
+    articleAuthors = article_vars["articleAuthors"]
+    articleTitle = article_vars["articleTitle"]
+    articleDoi = article_vars["articleDoi"]
 
     reviewLimitText = str(myconf.get("config.review_limit_text", default="three weeks"))
 
@@ -1521,9 +1525,11 @@ def email_for_new_reviewer():
     host = myconf.take("alerts.host")
     port = myconf.take("alerts.port", cast=lambda v: common_tools.takePort(v))
     site_url = URL(c="default", f="index", scheme=scheme, host=host, port=port)
-    art_authors = "[Undisclosed]" if (art.anonymous_submission) else art.authors
-    art_title = art.title
-    art_doi = common_small_html.mkLinkDOI(recomm.doi or art.doi)
+    
+    article_vars = emailing_vars.getArticleVars(db, article=art)
+    articleAuthors = article_vars["articleAuthors"]
+    articleTitle = article_vars["articleTitle"]
+    articleDoi = article_vars["articleDoi"]
 
     reviewLimitText = str(myconf.get("config.review_limit_text", default="three weeks"))
 

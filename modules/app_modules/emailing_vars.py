@@ -64,6 +64,32 @@ def getManagersMails(db):
 
     return result
 
+######################################################################################################################################################################
+# Mails vars
+######################################################################################################################################################################
+def getArticleVars(db, articleId=None, article=None, removeAuthorsAnonymity=False):
+    art = None
+    if article is not None:
+        art = article
+    if (art is None) and (articleId is not None):
+        art = db.t_articles[articleId]
+
+    if art is not None:
+        if article.anonymous_submission and not removeAuthorsAnonymity:
+            articleAuthors = current.T("[undisclosed]")
+        else:
+            articleAuthors = article.authors
+
+        mail_vars = dict(
+            articleTitle=art.title,
+            articleAuthors=articleAuthors,
+            articleDoi=common_small_html.mkDOI(article.doi),
+            articlePrePost="postprint" if art.already_published else "preprint",
+        )
+
+        return mail_vars
+
+
 
 ######################################################################################################################################################################
 # PCI RR vars
@@ -116,26 +142,4 @@ def getPCiRRScheduledSubmissionsVars(db, article):
         snapshotUrl=snapshotUrl,
     )
 
-
-# def getArticleVars(db, articleId=None, article=None, anonymousAuthors=False):
-#     art = None
-#     if article is not None:
-#         art = article
-#     if (art is None) and (articleId is not None):
-#         art = db.t_articles[articleId]
-
-#     if art is not None:
-#         if article.anonymous_submission and anonymousAuthors:
-#             articleAuthors = current.T("[undisclosed]")
-#         else:
-#             articleAuthors = article.authors
-
-#         mail_vars = dict(
-#             articleTitle=art.title,
-#             articleAuthors=articleAuthors,
-#             articleDoi=common_small_html.mkDOI(article.doi),
-#             articlePrePost="postprint" if art.already_published else "preprint",
-#         )
-
-#         return mail_vars
 
