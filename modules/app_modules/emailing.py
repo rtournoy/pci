@@ -2314,6 +2314,8 @@ def create_reminder_for_reviewer_review_soon_due(session, auth, db, reviewId):
             mail_vars["recommenderName"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
 
             mail_vars["ccAddresses"] = [db.auth_user[recomm.recommender_id]["email"]] + emailing_vars.getCoRecommendersMails(db, recomm.id)
+            
+            mail_vars["linkTarget"] = URL(c="user", f="my_reviews", vars=dict(pendingOnly=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
 
             hashtag_template = emailing_tools.getCorrectHashtag("#ReminderReviewerReviewSoonDue", article)
 
@@ -2341,6 +2343,8 @@ def create_reminder_for_reviewer_review_due(session, auth, db, reviewId):
 
             mail_vars["ccAddresses"] = [db.auth_user[recomm.recommender_id]["email"]] + emailing_vars.getCoRecommendersMails(db, recomm.id)
 
+            mail_vars["linkTarget"] = URL(c="user", f="my_reviews", vars=dict(pendingOnly=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
+
             hashtag_template = emailing_tools.getCorrectHashtag("#ReminderReviewerReviewDue", article)
 
             emailing_tools.insertReminderMailInQueue(auth, db, hashtag_template, mail_vars, recomm.id, None, article.id)
@@ -2366,6 +2370,8 @@ def create_reminder_for_reviewer_review_over_due(session, auth, db, reviewId):
             mail_vars["recommenderName"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
 
             mail_vars["ccAddresses"] = [db.auth_user[recomm.recommender_id]["email"]] + emailing_vars.getCoRecommendersMails(db, recomm.id)
+
+            mail_vars["linkTarget"] = URL(c="user", f="my_reviews", vars=dict(pendingOnly=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
 
             hashtag_template = emailing_tools.getCorrectHashtag("#ReminderReviewerReviewOverDue", article)
 
@@ -2457,6 +2463,8 @@ def create_reminder_for_recommender_decision_soon_due(session, auth, db, reviewI
         mail_vars["destPerson"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
 
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
+
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
         if pciRRactivated:
@@ -2484,6 +2492,8 @@ def create_reminder_for_recommender_decision_due(session, auth, db, reviewId):
     if recomm and count_reviews_completed >= 1 and count_reviews_under_consideration == 1 and article:
         mail_vars["destPerson"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
+
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
 
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
@@ -2513,6 +2523,8 @@ def create_reminder_for_recommender_decision_over_due(session, auth, db, reviewI
         mail_vars["destPerson"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
 
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
+
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
         if pciRRactivated:
@@ -2535,6 +2547,8 @@ def create_reminder_for_recommender_revised_decision_soon_due(session, auth, db,
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
         mail_vars["ccAddresses"] = emailing_vars.getCoRecommendersMails(db, recomm.id)
 
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
+
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
         mail_vars["recommenderName"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
@@ -2556,6 +2570,8 @@ def create_reminder_for_recommender_revised_decision_due(session, auth, db, arti
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
         mail_vars["ccAddresses"] = emailing_vars.getCoRecommendersMails(db, recomm.id)
 
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
+
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
         mail_vars["recommenderName"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
@@ -2576,6 +2592,8 @@ def create_reminder_for_recommender_revised_decision_over_due(session, auth, db,
         mail_vars["destPerson"] = common_small_html.mkUser(auth, db, recomm.recommender_id)
         mail_vars["destAddress"] = db.auth_user[recomm.recommender_id]["email"]
         mail_vars["ccAddresses"] = emailing_vars.getCoRecommendersMails(db, recomm.id)
+
+        mail_vars["linkTarget"] = URL(c="recommender", f="my_recommendations", vars=dict(pressReviews=False), scheme=mail_vars["scheme"], host=mail_vars["host"], port=mail_vars["port"])
 
         mail_vars.update(emailing_vars.getArticleVars(db, article=article, removeAuthorsAnonymity=True))
 
