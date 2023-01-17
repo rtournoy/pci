@@ -89,10 +89,9 @@ def index():
             )
 
         recomms = db.get_last_recomms()
-
         recommendedArticlesList = []
-        for row in queryRecommendedArticles:
-            r = article_components.getRecommArticleRowCard(auth, db, response, row, recomms.get(row.id), withDate=True)
+        for prow in queryRecommendedArticles:
+            r = article_components.getRecommArticleRowCard(auth, db, response, prow, recomms.get(prow.id), withDate=True)
             if r:
                 recommendedArticlesList.append(r)
 
@@ -128,13 +127,10 @@ def index():
                 _alt="article picture",
                 _class="pci-articlePicture",
             )
-
-        #if row.uploaded_picture == '': image = IMG(_src="/pci/static/images/small-background.png")
-        #else: image = IMG(_src=row.uploaded_picture)
-
+        
         image_container.append(image)
         left_column.append(date)
-        left_column.append(image_container)
+        left_column.append(image_container)        
         single_row.append(left_column)
 
         # generate right column (rest of article content)
@@ -162,15 +158,21 @@ def index():
             rev_span = SPAN(reviewer)
             recommend_sub.append(rev_span)'''
         recommend_container.append(recommend_sub)
-        abstract_fader = SPAN(DIV(_class="fade-transparent-text"))
-        more_link = DIV(A(current.T("More..."),
-                        _id="moreLatestBtn",
-                        _onclick="ajax('%s', ['qyThemaSelect', 'maxArticles'], 'lastRecommendations')" % (URL("articles", "last_recomms", vars=myVarsNext, user_signature=True)),
-                        _class="btn btn-default",
-            ))
+        abstract_box = SPAN()
+        abstract_fader = DIV(_class="fade-transparent-text")
+        abstract = P(WIKI(row.abstract or "", safe_mode=False))
+        abstract_fader.append(abstract)
+        abstract_box.append(abstract_fader)
+
+        '''more_link = DIV(A(current.T("More..."),
+                        _href=URL("articles", "rec", vars=row.id, user_signature=True ),
+                        _class="btn btn-success pci-public pci-smallBtn",
+            ))'''
+        more_link = DIV(A( current.T("More..."),
+                        _class="btn btn-success pci-public pci-smallBtn",))
         bottom_container.append(small_head)
         bottom_container.append(recommend_container)
-        bottom_container.append(abstract_fader)
+        bottom_container.append(abstract_box)
         bottom_container.append(more_link)
 
         right_column.append(bottom_container)
