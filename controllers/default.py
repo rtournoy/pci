@@ -11,6 +11,7 @@ from gluon.contrib.markdown import WIKI
 
 from app_modules.helper import *
 from gluon.utils import web2py_uuid
+from gluon.storage import Storage # for db.get_last_recomms()
 
 from app_components import article_components
 from app_components import app_forms
