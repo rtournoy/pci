@@ -1436,6 +1436,10 @@ def edit_review():
                 zipped = zip_uploaded_files(files)
                 filename = db.t_reviews.review_pdf.store(zipped, "uploaded_review.zip")
                 review.update_record(review_pdf=filename, review_pdf_data=zipped)
+            elif files[0] is not None:
+                _ = files[0]
+                filename = db.t_reviews.review_pdf.store(_.value, _.filename)
+                review.update_record(review_pdf=filename, review_pdf_data=_.value)
 
             if form.vars.save:
                 session.flash = T("Review saved", lazy=False)
