@@ -35,6 +35,10 @@
         width: 100%;
     }
 
+    #lastRecommendationsDiv {
+        min-height: auto;
+    }
+
     #main-page-search-grid {
 
     }
