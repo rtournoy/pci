@@ -100,7 +100,7 @@ def index():
     original_grid = SQLFORM.grid(
         (t_articles.status == "Recommended"),
         maxtextlength=250,
-        paginate=20,
+        paginate=10,
         csv=False,
         fields=[
             t_articles.id,
