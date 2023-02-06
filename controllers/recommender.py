@@ -1210,15 +1210,10 @@ def reviewers():
             myContents = DIV(H3(B("Reviewers already invited:")), UL(reviewersList), _style="width:100%; max-width: 1200px")
         else:
             myContents = ""
-        longname = myconf.take("app.longname")
         myUpperBtn = DIV(
             A(
-                SPAN(current.T("Choose a reviewer from the %s database") % (longname), _class="btn btn-success"),
+                SPAN(current.T("Invite a reviewer"), _class="btn btn-success"),
                 _href=URL(c="recommender", f="search_reviewers", vars=dict(recommId=recommId, myGoal="4review", exclude=excludeList)),
-            ),
-            A(
-                SPAN(current.T("Choose a reviewer outside %s database") % (longname), _class="btn btn-default"),
-                _href=URL(c="recommender", f="email_for_new_reviewer", vars=dict(recommId=recommId)),
             ),
             _style="margin-top:8px; margin-bottom:16px; text-align:left; max-width:1200px; width: 100%",
         )
