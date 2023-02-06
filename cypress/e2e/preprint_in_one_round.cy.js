@@ -350,7 +350,7 @@ describe("Preprint recommended in one round", () => {
     it("Should search for reviewer 1 (co_recommender user)", () => {
       cy.contains(
         ".btn",
-        "Choose a reviewer from the PCI Evol Biol DEV database"
+        "Invite a reviewer"
       ).click();
 
       cy.get('#simple-search-input').typeFast(reviewer_1.firstname);
@@ -376,7 +376,7 @@ describe("Preprint recommended in one round", () => {
     it("Should search for reviewer 2 (developer user)", () => {
       cy.contains(
         ".btn",
-        "Choose a reviewer from the PCI Evol Biol DEV database"
+        "Invite a reviewer"
       ).click();
 
       cy.get('#simple-search-input').typeFast(reviewer_2.firstname);
@@ -402,7 +402,11 @@ describe("Preprint recommended in one round", () => {
     it("Should invite reviewer outside PCI database", () => {
       cy.contains(
         ".btn",
-        "Choose a reviewer outside PCI Evol Biol DEV database"
+        "Invite a reviewer"
+      ).click();
+      cy.contains(
+        ".btn",
+        "Invite new reviewer"
       ).click();
 
       cy.get("#no_table_reviewer_first_name").typeFast("Titi");

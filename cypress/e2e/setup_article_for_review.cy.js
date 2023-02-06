@@ -176,7 +176,7 @@ describe("Preprint recommendation setup for review", () => {
     });
 
     it("Should search for reviewer (developer user)", () => {
-      cy.contains(".btn", "Choose a reviewer from the PCI Evol Biol DEV database").click();
+      cy.contains(".btn", "Invite a reviewer").click();
 
       cy.get('#simple-search-input').typeFast(reviewer.firstname);
       //cy.get(".pci2-search-button").click(); // search button not shown (pci-timo.css), use enter
@@ -215,7 +215,8 @@ describe("Preprint recommendation setup for review", () => {
 
     it("Should invite reviewer outside PCI database", () => {
       cy.contains(".btn", "Invite a reviewer").first().click();
-      cy.contains(".btn", "Choose a reviewer outside PCI Evol Biol DEV database").click();
+      cy.contains(".btn", "Invite a reviewer").click();
+      cy.contains(".btn", "Invite new reviewer").click();
 
       cy.get("#no_table_reviewer_first_name").typeFast("Titi");
       cy.get("#no_table_reviewer_last_name").typeFast("Toto");

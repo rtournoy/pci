@@ -194,7 +194,7 @@ class Recommender_handles:
     notif.contains("e-mail sent to " + recommender.name)
 
  def search_and_invite_registered_reviewer(_):
-    select(".btn", contains="Choose a reviewer from the".upper()).click()
+    select(".btn", contains="Invite a reviewer".upper()).click()
     select('#simple-search-input').send_keys(reviewer.name + "\n")
 
     select("a", "Prepare an invitation".upper()).click()
@@ -210,7 +210,8 @@ class Recommender_handles:
     row = select("tr", contains=article.title)
     row.select(".btn", "Invite a reviewer".upper()).click()
 
-    select(".btn", contains="Choose a reviewer outside".upper()).click()
+    select(".btn", contains="Invite a reviewer".upper()).click()
+    select(".btn", contains="Invite new reviewer".upper()).click()
 
     select("#no_table_reviewer_first_name").send_keys("Titi")
     select("#no_table_reviewer_last_name").send_keys("Toto")
