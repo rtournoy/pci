@@ -1733,7 +1733,18 @@ def email_for_new_reviewer():
 
     form.element(_type="submit")["_value"] = T("Send e-mail")
 
-    if form.process().accepted:
+    def on_validation(form):
+        existingUser = db(db.auth_user.email.upper() == form.vars.reviewer_email.upper()).select().last()
+        if existingUser:
+            form.errors.reviewer_email = """
+            This email belongs to an already registered user.
+            Please provide the email of a new reviewer.
+            To invite the reviewer registered with this email,
+            please use the relevant button 'Prepare an invitation'
+            in the list on the previous page.
+            """
+
+    if form.process(onvalidation=on_validation).accepted:
         cc_addresses = emailing_tools.list_addresses(form.vars.cc)
         replyto_addresses = emailing_tools.list_addresses(replyto_address)
         new_user_id = None
