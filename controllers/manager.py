@@ -1420,7 +1420,7 @@ def recommender_statistics():
 
     db.v_recommender_stats.recommender_details.readable = False
 
-    db.v_recommender_stats.id.represent = lambda id, row: common_small_html.mkUserWithMail(auth, db, id)
+    db.v_recommender_stats.id.represent = lambda id, row: TAG(row.recommender_details) if row.recommender_details else common_small_html.mkUserWithMail(auth, db, id)
     db.v_recommender_stats.total_invitations.represent = lambda text, row: A(text, _href=URL("manager", "bla_bla", vars=dict(recommId=row.id)))
     db.v_recommender_stats.total_accepted.represent = lambda text, row: A(text, _href=URL("manager", "bla_bla", vars=dict(recommId=row.id)))
     db.v_recommender_stats.total_completed.represent = lambda text, row: A(text, _href=URL("manager", "bla_bla", vars=dict(recommId=row.id)))
@@ -1451,6 +1451,7 @@ def recommender_statistics():
             db.v_recommender_stats.current_invitations,
             db.v_recommender_stats.current_assignments,
             db.v_recommender_stats.awaiting_revision,
+            db.v_recommender_stats.recommender_details,
             # db.v_recommender_stats.requiring_action,
             # db.v_recommender_stats.requiring_reviewers,
             # db.v_recommender_stats.required_reviews_completed,
