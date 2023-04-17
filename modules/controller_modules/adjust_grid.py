@@ -212,7 +212,7 @@ def alphabetical_search_widget(result_table, web2py_grid):
         # ...create table rows with upper letters
         for c in columns_a:
             name = c.flatten(markdown)
-            first_char = name.upper().split(' ')[1:][0][0]
+            first_char = name.upper().split(' ')[-1:][0][0]
             char_row = TR( TD(first_char, _id=first_char), TD(), _class="pci-capitals",)
             if first_char not in chars:
                 chars.append(first_char)
@@ -220,5 +220,6 @@ def alphabetical_search_widget(result_table, web2py_grid):
             break
 
     if chars:
+        chars.sort()
         search_widget = common_small_html.mkSearchWidget(chars)
         web2py_grid.insert(1, search_widget)
