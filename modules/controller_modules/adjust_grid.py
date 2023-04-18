@@ -144,11 +144,11 @@ def adjust_grid_basic(grid, search_name, remove_options = [], integer_fields = [
                 sending_status_input_field.attributes.update({'_style':'display:flex'})
     elif search_name == 'recommenders_about':
         for option in select_panel:
-            if option.attributes['_value'].endswith('.first_name'):
+            if option.attributes['_value'].endswith('.last_name'):
                 option.attributes.update({'_selected':'selected'})
-                first_name_input_field = grid.element('div#w2p_field_auth_user-first_name')
+                first_name_input_field = grid.element('div#w2p_field_auth_user-last_name')
                 first_name_input_field.attributes.update({'_style':'display:flex'})
-                option.__setitem__(0,'First Name')
+                option.__setitem__(0,'Last Name')
             elif option.attributes['_value'].endswith('.institution'):
                 option.__setitem__(0,'Institution')
     else:
