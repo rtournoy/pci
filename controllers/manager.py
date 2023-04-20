@@ -160,6 +160,135 @@ def completed_articles():
 def _manage_articles(statuses, whatNext, db=db):
     response.view = "default/myLayout.html"
 
+    # users
+    def index_by(field, query): return { x[field]: x for x in db(query).select() }
+
+    users = index_by("id", db.auth_user)
+    last_recomms = db.executesql("select max(id) from t_recommendations group by article_id") if not statuses else \
+                   db.executesql("select max(id) from t_recommendations where article_id in " +
+                       "(select id from t_articles where status in ('" + "','".join(statuses) + "')) " +
+                       "group by article_id")
+    last_recomms = [x[0] for x in last_recomms]
+    recomms = index_by("article_id", db.t_recommendations.id.belongs(last_recomms))
+    co_recomms = db(db.t_press_reviews.recommendation_id.belongs(last_recomms)).select()
+
+    # articles
+    articles = db.t_articles
+    full_text_search_fields = [
+        'id',
+        'anonymous_submission',
+        'user_id',
+        'status',
+        'title',
+        'authors',
+        'thematics',
+        'art_state_1_id',
+        'report_stage',
+        'request_submission_change',
+        'last_status_change',
+        'keywords',
+        'submitter_details',
+        'upload_timestamp',
+        'auto_nb_recommendations',
+        'article_published'
+    ]
+
+    def mkUser(user_details, user_id):
+        return TAG(user_details) if user_details else common_small_html._mkUser(users.get(user_id))
+
+    def mkSubmitter(row):
+        return SPAN(
+            DIV(common_small_html.mkAnonymousArticleField(None, None, row.anonymous_submission, "")),
+            mkUser(row.submitter_details, row.user_id),
+        )
+
+    def mkRecommenders(row):
+        article_id = row.id
+
+        recomm = recomms.get(article_id)
+        if not recomm:
+            return DIV("no recommender")
+
+        resu = DIV()
+        resu.append(mkUser(recomm.recommender_details,recomm.recommender_id))
+
+        for co_recomm in co_recomms:
+            if co_recomm.recommendation_id == recomm.id:
+                resu.append(mkUser(co_recomm.contributor_details, co_recomm.contributor_id))
+
+        if len(resu) > 1:
+            resu.insert(1, DIV(B("Co-recommenders:")))
+
+        return resu
+    
+    def article_html(art_id):
+        return common_small_html.mkRepresentArticleLight(auth, db, art_id)
+
+    articles.id.readable = True
+    articles.id.represent = lambda text, row: article_html(row.id)
+    articles.thematics.label = "Thematics fields"
+    articles.thematics.type = "string"
+    articles.thematics.requires = IS_IN_DB(db, db.t_thematics.keyword, zero=None)
+    articles.auto_nb_recommendations.readable = True
+
+    articles.anonymous_submission.represent = lambda txt, row: mkSubmitter(row)
+    articles.anonymous_submission.label = 'Submitter'
+
+    articles.title.represent = lambda txt, row: mkRecommenders(row)
+    articles.title.label = 'Recommenders'
+
+    for a_field in articles.fields:
+        if not a_field in full_text_search_fields:
+            articles[a_field].readable = False
+
+    articles.id.label = "Article"
+
+    links = []
+    links.append(dict(header="", body=lambda row: A(
+        SPAN(current.T("Willing to review"), _class="buttontext btn btn-default pci-button pci-submitter"),
+                _href=URL(c="user", f="ask_to_review", vars=dict(articleId=row.id)),
+                _class="",
+                _title=current.T("View and/or edit article"),),),)
+
+    if statuses:
+        query = db.t_articles.status.belongs(statuses)
+    else:
+        query = db.t_articles
+
+    # recommenders only ever get here via menu "Recommender > Pending validation(s)"
+    if pciRRactivated and is_recommender(auth, request):
+        query = db.pending_scheduled_submissions_query
+    
+    original_grid = SQLFORM.grid(
+        query,
+        searchable=True,
+        details=False,
+        editable=False,
+        deletable=False,
+        create=False,
+        csv=csv,
+        exportclasses=expClass,
+        maxtextlength=250,
+        paginate=20,
+        fields=[
+            articles.last_status_change,
+            articles.status,
+            articles.id,
+            articles.thematics,
+            articles.upload_timestamp,
+            articles.anonymous_submission,
+            articles.art_stage_1_id,
+            articles.user_id,
+            articles.submitter_details,
+            articles.title,
+        ],
+        links=links,
+        orderby=~articles.last_status_change,
+        _class="web2py_grid action-button-absolute",
+    )
+
+
+    '''
     if statuses:
         query = db.t_articles.status.belongs(statuses)
     else:
@@ -344,7 +473,7 @@ def _manage_articles(statuses, whatNext, db=db):
         orderby=~db.t_articles.last_status_change,
         _class="web2py_grid action-button-absolute",
     )
-
+    '''
     # options to be removed from the search dropdown:
     remove_options = ['t_articles.id', 't_articles.upload_timestamp',  't_articles.status',
                   't_articles.last_status_change', 't_status_article.status',
@@ -361,8 +490,10 @@ def _manage_articles(statuses, whatNext, db=db):
     grid = adjust_grid.adjust_grid_basic(original_grid, 'articles', remove_options)
 
     return dict(
-        customText=getText(request, auth, _db, "#ManagerArticlesText"),
-        pageTitle=getTitle(request, auth, _db, "#ManagerArticlesTitle"),
+        #customText=getText(request, auth, _db, "#ManagerArticlesText"),
+        #pageTitle=getTitle(request, auth, _db, "#ManagerArticlesTitle"),
+        customText=getText(request, auth, db, "#ManagerArticlesText"),
+        pageTitle=getTitle(request, auth, db, "#ManagerArticlesTitle"),
         grid=grid,
         absoluteButtonScript=common_tools.absoluteButtonScript,
     )
