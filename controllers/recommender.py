@@ -1063,6 +1063,7 @@ def reviews():
 
 ######################################################################################################################################################################
 def edit_reviewers(reviewersListSel, recomm, recommId=None, new_round=False, new_stage=False):
+            reviewers_emails = [auth.user.email] # To prevent duplication
             reviewersIds = [auth.user_id]
             reviewersList = []
             current_reviewers_id = []
@@ -1071,13 +1072,21 @@ def edit_reviewers(reviewersListSel, recomm, recommId=None, new_round=False, new
                     db(db.t_reviews.id == con.id).delete()
                 else:
                     reviewer_id = con.reviewer_id
+                    if reviewer_id:
+                        reviewer_email = db.auth_user[reviewer_id].email
+                    elif con.reviewer_details:
+                        reviewer_email = re.search(r'\[(.*?)\]', con.reviewer_details).group(1)
+                    else:
+                        reviewer_email = None
+
                     if recomm.recommender_id == reviewer_id:
                         selfFlag = True
                         if con.review_state == "Cancelled":
                             selfFlagCancelled = True
-                    if reviewer_id in reviewersIds:
+                    if reviewer_email != None and reviewer_email in reviewers_emails:
                         pass
                     else:
+                        reviewers_emails.append(reviewer_email)
                         reviewersIds.append(reviewer_id)
                         display = LI(
                                 TAG(con.reviewer_details) if con.reviewer_details else \
@@ -1103,6 +1112,8 @@ def edit_reviewers(reviewersListSel, recomm, recommId=None, new_round=False, new
                         reviewersList.append(display)
                     
             return list(set(reviewersList)), reviewersIds
+
+
 ######################################################################################################################################################################
 def get_prev_reviewers(article_id, recomm, new_round=False, new_stage=False):
     total_count = []
@@ -1128,6 +1139,8 @@ def get_prev_reviewers(article_id, recomm, new_round=False, new_stage=False):
     customText=getText(request, auth, db, "#RecommenderReinviteReviewersText")
 
     return prevRoundHeader, customText
+
+
 ######################################################################################################################################################################
 @auth.requires(auth.has_membership(role="recommender") or auth.has_membership(role="manager"))
 def reviewers():
@@ -2465,8 +2478,11 @@ def article_reviews_emails():
         )
     ]
 
+    user_mail = db.auth_user[auth.user_id].email
+    query = (db.mail_queue.article_id == articleId) & (db.mail_queue.cc_mail_addresses.ilike("%" + user_mail + "%") | db.mail_queue.dest_mail_address.ilike(user_mail) | db.mail_queue.replyto_addresses.ilike("%" + user_mail + "%"))
+
     grid = SQLFORM.grid(
-        db((db.mail_queue.article_id == articleId) & (db.mail_queue.dest_mail_address.belongs(reviewers))),
+        db(query),
         details=True,
         editable=lambda row: (row.sending_status == "pending"),
         deletable=lambda row: (row.sending_status == "pending"),
@@ -2495,7 +2511,7 @@ def article_reviews_emails():
         _class="web2py_grid action-button-absolute",
     )
 
-    myScript = common_tools.get_script("replace_mail_content.js"),
+    myScript = common_tools.get_script("replace_mail_content.js")
     return dict(
         titleIcon="send",
         pageTitle=getTitle(request, auth, db, "#ArticleReviewsEmailsTitle"),
