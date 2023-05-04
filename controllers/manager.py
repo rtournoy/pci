@@ -33,6 +33,7 @@ from app_modules import common_tools
 from app_modules import emailing_tools
 from app_modules import common_small_html
 from app_modules import emailing
+from app_modules import hypothesis
 
 from app_modules.common_small_html import md_to_html
 
@@ -372,6 +373,8 @@ def recommendations():
         and art.status == "Recommended"
     ):
         recommStatusHeader = TAG(recommStatusHeader)
+        if not pciRRactivated and hypothesis.Hypothesis.may_have_annotation(art.preprint_server):
+            recommStatusHeader.append(hypothesis_button(art))
         recommStatusHeader.append(crossref_toolbar(art))
 
     if printable:
@@ -398,12 +401,11 @@ def recommendations():
         isPendingValidation=(art.status == "Pending" and not pciRRactivated),
     )
 
-
 def crossref_toolbar(article):
     return DIV(
         crossref_button(article),
         crossref_status(article),
-        _style="margin-top: -2em;",
+        _style="width: fit-content; display: inline-block",
     )
 
 def crossref_button(article):
@@ -413,6 +415,15 @@ def crossref_button(article):
         _href=URL("crossref", f"post_form?article_id={article.id}"),
         _class="pci2-tool-link pci2-yellow-link",
         _style="margin-right: 25px;",
+    )
+
+def hypothesis_button(article):
+    return A(
+        I(_class="glyphicon glyphicon-edit", _style="vertical-align:middle"),
+        T("Hypothes.is"),
+        _href=URL("hypothesis", f"post_form?article_id={article.id}"),
+        _class="pci2-tool-link pci2-yellow-link",
+        _style="display: inline-block; margin-right: 20px",
     )
 
 def crossref_status(article):
